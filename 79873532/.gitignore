@@ -1,0 +1,84 @@
+# dbt target directory (compiled SQL, etc.)
+target/
+
+# dbt packages directory (installed dependencies)
+dbt_packages/
+
+# dbt logs directory
+logs/
+
+# dbt artifacts (manifest, run results, etc.)
+manifest.json
+run_results.json
+sources.json
+
+# Database files
+*.db
+*.sqlite
+*.duckdb
+*.parquet
+*.csv.gz
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Editor directories and files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# Python virtual environment
+venv/
+env/
+ENV/
+*.venv
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Log files
+*.log
+logs/
+
+# OS generated files
+Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Test and coverage reports
+coverage/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/

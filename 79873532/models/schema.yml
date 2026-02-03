@@ -1,0 +1,29 @@
+version: 2
+
+sources:
+  - name: json_data
+    database: 'dbt_json_sqlite'
+    schema: main
+    tables:
+      - name: users_json_files
+        external:
+          location: 'data/json_files/*.json'
+        columns:
+          - name: id
+            data_type: integer
+            description: "The user ID"
+            tests:
+              - not_null
+              - unique
+          - name: name
+            data_type: varchar
+            description: "The user's name"
+          - name: age
+            data_type: integer
+            description: "The user's age"
+          - name: file_name
+            data_type: varchar
+            description: "The name of the source JSON file"
+          - name: value
+            data_type: varchar
+            description: "The raw JSON content of the record"
