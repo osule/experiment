@@ -21,11 +21,15 @@
   "author": "Oluwafemi Sule",
   "license": "MIT",
   "dependencies": {
-    "@langchain/community": "^0.2.16",
-    "@langchain/core": "^0.2.18",
-    "@langchain/ollama": "^0.1.0",
+    "@langchain/classic": "^1.0.15",
+    "@langchain/community": "^1.1.12",
+    "@langchain/core": "^1.1.19",
+    "@langchain/ollama": "^1.2.2",
     "cheerio": "^1.2.0",
-    "langchain": "^0.2.14"
+    "langchain": "^1.2.18"
+  },
+  "overrides": {
+    "@langchain/core": "^1.1.19"
   },
   "devDependencies": {
     "@types/node": "^20.12.7",
