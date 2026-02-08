@@ -1,0 +1,38 @@
+{
+  "name": "langchain-ollama-demo",
+  "version": "1.0.0",
+  "description": "LangChain Ollama demo with web scraping and vector store",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "langchain",
+    "ollama",
+    "ai",
+    "llm",
+    "vector-store",
+    "web-scraping"
+  ],
+  "author": "Oluwafemi Sule",
+  "license": "MIT",
+  "dependencies": {
+    "@langchain/community": "^0.2.16",
+    "@langchain/core": "^0.2.18",
+    "@langchain/ollama": "^0.1.0",
+    "cheerio": "^1.2.0",
+    "langchain": "^0.2.14"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "tsx": "^4.19.3",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,100 @@
+// Source - https://stackoverflow.com/a/79883529
+// Posted by Oluwafemi Sule
+// Retrieved 2026-02-07, License - CC BY-SA 4.0
+
+import { ChatOllama, OllamaEmbeddings } from "@langchain/ollama";
+import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
+
+import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+
+import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
+
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+
+import { MemoryVectorStore } from "langchain/vectorstores/memory";
+import { createRetrievalChain } from "langchain/chains/retrieval";
+import { createHistoryAwareRetriever } from "langchain/chains/history_aware_retriever";
+
+import { AIMessage, HumanMessage } from "@langchain/core/messages";
+
+
+async function createVectorStore() {
+    const loader = new CheerioWebBaseLoader("https://www.blog.langchain.com/langchain-expression-language/")
+    const docs = await loader.load()
+
+
+    const splitter = new RecursiveCharacterTextSplitter({chunkSize: 200, chunkOverlap: 20})
+    const splitDocs = await splitter.splitDocuments(docs)
+
+    const embeddings = new OllamaEmbeddings({model: "mxbai-embed-large"})
+    const vectorStore = await MemoryVectorStore.fromDocuments(splitDocs, embeddings)
+
+    return vectorStore
+}
+
+// create retrieval chain
+async function createChain(vectorStore) {
+
+    const model = new ChatOllama({
+        model: "llama3"
+    })
+
+    const prompt = ChatPromptTemplate.fromMessages([
+        [
+            "system", 
+            "Answer the user's questions based on the following context: {context}"
+        ],
+        new MessagesPlaceholder("chat_history"),
+        [
+            "human", 
+            "{input}"
+        ],
+    ])
+
+    const retrieverPrompt = ChatPromptTemplate.fromMessages([
+        new MessagesPlaceholder("chat_history"),
+        ["human", "{input}"],
+        ["human", "Given the above conversation, generate a search query to look up in order to get information relevant to the conversation"],
+        
+    ])
+
+    const chain = await createStuffDocumentsChain({
+        llm: model,
+        prompt
+    })
+
+    const retriever = vectorStore.asRetriever()
+
+    const historyAwareRetriever = await createHistoryAwareRetriever({
+        llm: model,
+        retriever,
+        rephrasePrompt: retrieverPrompt,
+    })
+
+    const conversationChain = await createRetrievalChain({
+        combineDocsChain: chain,
+        retriever: historyAwareRetriever
+    })
+
+    return conversationChain
+}
+
+const vectorStore = await createVectorStore()
+const chain = await createChain(vectorStore)
+
+// fake chat history for testing
+const chatHistory = [
+    new HumanMessage("Hello"),
+    new AIMessage("Hi, How can I help you?"),
+    new HumanMessage("My name is debby"),
+    new AIMessage("Hi Debby, How can I help you?"),
+    new HumanMessage("What is LECL?"),
+    new AIMessage("LECL stands for Langchain Expression Language"),
+]
+
+const response = await chain.invoke({ 
+    input: "Explain more about that?",
+    chat_history: chatHistory
+})
+
+console.log(response);
