@@ -5,17 +5,19 @@
 import { ChatOllama, OllamaEmbeddings } from "@langchain/ollama";
 import { ChatPromptTemplate, MessagesPlaceholder } from "@langchain/core/prompts";
 
-import { createStuffDocumentsChain } from "langchain/chains/combine_documents";
+import { createStuffDocumentsChain } from "@langchain/classic/chains/combine_documents";
 
 import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
 
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
-import { MemoryVectorStore } from "langchain/vectorstores/memory";
-import { createRetrievalChain } from "langchain/chains/retrieval";
-import { createHistoryAwareRetriever } from "langchain/chains/history_aware_retriever";
+import { MemoryVectorStore } from "@langchain/classic/vectorstores/memory";
+// import { createRetrievalChain } from "@langchain/classic/chains/retrieval";
+import { createHistoryAwareRetriever } from "@langchain/classic/chains/history_aware_retriever";
 
 import { AIMessage, HumanMessage } from "@langchain/core/messages";
+import { RunnableSequence, RunnablePassthrough } from "@langchain/core/runnables";
+import { createRetrievalChain } from "@langchain/classic/chains/retrieval";
 
 
 async function createVectorStore() {
@@ -63,7 +65,7 @@ async function createChain(vectorStore) {
         prompt
     })
 
-    const retriever = vectorStore.asRetriever()
+    const retriever = vectorStore.asRetriever();
 
     const historyAwareRetriever = await createHistoryAwareRetriever({
         llm: model,
@@ -73,7 +75,7 @@ async function createChain(vectorStore) {
 
     const conversationChain = await createRetrievalChain({
         combineDocsChain: chain,
-        retriever: historyAwareRetriever
+        retriever: RunnableSequence.from([(input) => ({input}), historyAwareRetriever])
     })
 
     return conversationChain
