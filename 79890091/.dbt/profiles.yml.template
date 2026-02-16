@@ -1,0 +1,16 @@
+# Placeholder profiles.yml for dbt. Fill values and save as .dbt/profiles.yml
+starrocks_profile:
+  target: dev
+  outputs:
+    dev:
+      type: mysql  # StarRocks can accept MySQL clients; change adapter if you use a different dbt adapter
+      threads: 1
+      host: <STARROCKS_HOST>
+      port: 9030
+      user: <USER>
+      pass: <PASSWORD>
+      schema: <DATABASE_OR_SCHEMA>
+      database: <DATABASE>
+      connect_timeout: 10
+
+# If you have a specific dbt adapter for StarRocks (community adapter), replace `type` and adjust keys.

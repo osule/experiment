@@ -1,0 +1,14 @@
+name: starrocks_dbt
+version: '1.0'
+config-version: 2
+
+profile: starrocks_profile
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["data"]
+macro-paths: ["macros"]
+
+models:
+  +materialized: view

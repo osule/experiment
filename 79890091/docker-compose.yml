@@ -1,0 +1,56 @@
+services:
+  starrocks:
+    image: starrocks/allin1-ubuntu:4.0.0
+    container_name: starrocks-dev
+    ports:
+      - "9030:9030"
+      - "8030:8030"
+    volumes:
+      - sr_data:/data/deploy/starrocks/be/storage
+      - ./docker/starrocks/init-starrocks.sql:/docker-entrypoint-initdb.d/init-starrocks.sql
+    networks:
+      - analytics-net
+    healthcheck:
+      test: ["CMD", "mysql", "-h", "127.0.0.1", "-P", "9030", "-uroot", "-e", "SELECT 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql-dev
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=YourPassword123!
+    volumes:
+      - ./docker/sqlserver:/scripts
+    networks:
+      - analytics-net
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "YourPassword123!", "-Q", "SELECT 1", "-C"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+  dbt:
+    build:
+      context: ./docker/dbt
+    container_name: dbt
+    volumes:
+      - ./:/usr/app
+    working_dir: /usr/app
+    environment:
+      - DBT_PROFILES_DIR=/usr/app/.dbt
+    depends_on:
+      starrocks:
+        condition: service_healthy
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - analytics-net
+
+volumes:
+  sr_data:
+
+networks:
+  analytics-net:

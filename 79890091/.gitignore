@@ -1,0 +1,23 @@
+# dbt
+target/
+dbt_packages/
+dbt_modules/
+logs/
+
+# Profiles (Secrets)
+.dbt/profiles.yml
+
+# Docker
+.env
+docker/starrocks/data/
+docker/sqlserver/data/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo

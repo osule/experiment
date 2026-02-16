@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: src_reports
+    database: jdbc_sqlserver
+    schema: dbo
+    tables:
+      - name: table_in_sqlserver
+        description: "External table in StarRocks that points to SQL Server via JDBC catalog"
